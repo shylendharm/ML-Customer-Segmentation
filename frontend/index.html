@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Segmentation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container home-container">
+        <div class="hero">
+            <h1>🎯 Customer Segmentation</h1>
+            <p class="subtitle">AI-Powered Customer Analysis using K-Means Clustering</p>
+            
+            <div class="features">
+                <div class="feature">
+                    <span class="feature-icon">📊</span>
+                    <h3>Visual Analysis</h3>
+                    <p>Interactive charts and cluster visualization</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">🤖</span>
+                    <h3>ML Powered</h3>
+                    <p>K-Means clustering with optimal k selection</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">📈</span>
+                    <h3>Actionable Insights</h3>
+                    <p>Customer profiles for targeted marketing</p>
+                </div>
+            </div>
+
+            <button onclick="runModel()" class="run-btn">
+                <span class="btn-text">🚀 Run Segmentation</span>
+                <span class="btn-loader" style="display: none;">Processing...</span>
+            </button>
+            
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <script>
+    async function runModel() {
+        const btn = document.querySelector(".run-btn");
+        const btnText = btn.querySelector(".btn-text");
+        const btnLoader = btn.querySelector(".btn-loader");
+        const resultDiv = document.getElementById("result");
+        
+        btn.disabled = true;
+        btnText.style.display = "none";
+        btnLoader.style.display = "inline";
+        resultDiv.innerHTML = "";
+        
+        try {
+            const res = await fetch("http://localhost:3000/run-model");
+            const data = await res.json();
+
+            if (data.error) {
+                resultDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+            } else {
+                resultDiv.innerHTML = `<p class="success">✅ Segmentation completed! Redirecting...</p>`;
+                setTimeout(() => {
+                    window.location.href = "dashboard.html";
+                }, 1000);
+            }
+        } catch (err) {
+            resultDiv.innerHTML = `<p class="error">Error: ${err.message}</p>`;
+            btn.disabled = false;
+            btnText.style.display = "inline";
+            btnLoader.style.display = "none";
+        }
+    }
+    </script>
+</body>
+</html>
