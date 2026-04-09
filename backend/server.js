@@ -15,10 +15,20 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "..", "frontend", "index.html"));
 });
 
+// Serve data.json
+app.get("/data.json", (req, res) => {
+    const dataPath = path.join(__dirname, "data.json");
+    if (fs.existsSync(dataPath)) {
+        res.json(JSON.parse(fs.readFileSync(dataPath, "utf-8")));
+    } else {
+        res.status(404).json({ error: "Data not found. Run the model first." });
+    }
+});
+
 // Run ML model
 app.get("/run-model", (req, res) => {
     const modelPath = path.join(__dirname, "..", "ml", "model.py");
-    
+
     exec(`python "${modelPath}"`, { cwd: __dirname }, (err, stdout, stderr) => {
         if (err) return res.status(500).json({ error: err.message });
 

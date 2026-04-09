@@ -4,17 +4,27 @@ let chartInstance = null;
 async function loadDashboard() {
     const loading = document.getElementById("loading");
     const dashboard = document.getElementById("dashboard");
-    
+
     loading.style.display = "flex";
     dashboard.style.display = "none";
-    
-    try {
-        const res = await fetch("http://localhost:3000/run-model");
-        const data = await res.json();
 
-        if (data.error) {
-            loading.innerHTML = `<p class="error">Error: ${data.error}</p>`;
-            return;
+    try {
+        // First, try to load existing data
+        const dataRes = await fetch("http://localhost:3000/data.json");
+        
+        let data;
+        if (dataRes.ok) {
+            // Data exists, load it
+            data = await dataRes.json();
+        } else {
+            // No data yet, run the model
+            const res = await fetch("http://localhost:3000/run-model");
+            data = await res.json();
+            
+            if (data.error) {
+                loading.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+                return;
+            }
         }
 
         allCustomers = data;

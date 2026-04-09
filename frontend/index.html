@@ -8,66 +8,55 @@
 </head>
 <body>
     <div class="container home-container">
+        <h1>🎯 Customer Segmentation</h1>
         <div class="hero">
-            <h1>🎯 Customer Segmentation</h1>
-            <p class="subtitle">AI-Powered Customer Analysis using K-Means Clustering</p>
-            
-            <div class="features">
-                <div class="feature">
-                    <span class="feature-icon">📊</span>
-                    <h3>Visual Analysis</h3>
-                    <p>Interactive charts and cluster visualization</p>
-                </div>
-                <div class="feature">
-                    <span class="feature-icon">🤖</span>
-                    <h3>ML Powered</h3>
-                    <p>K-Means clustering with optimal k selection</p>
-                </div>
-                <div class="feature">
-                    <span class="feature-icon">📈</span>
-                    <h3>Actionable Insights</h3>
-                    <p>Customer profiles for targeted marketing</p>
-                </div>
+            <p class="subtitle">Use Machine Learning to segment customers based on income and spending behavior</p>
+            <button onclick="runModel()" class="run-btn" id="run-btn">Run Segmentation</button>
+            <div id="status"></div>
+        </div>
+        <div class="features">
+            <div class="feature">
+                <span class="feature-icon">📊</span>
+                <h3>K-Means Clustering</h3>
+                <p>Automatic customer grouping using silhouette score optimization</p>
             </div>
-
-            <button onclick="runModel()" class="run-btn">
-                <span class="btn-text">🚀 Run Segmentation</span>
-                <span class="btn-loader" style="display: none;">Processing...</span>
-            </button>
-            
-            <div id="result"></div>
+            <div class="feature">
+                <span class="feature-icon">📈</span>
+                <h3>Visual Analytics</h3>
+                <p>Interactive charts showing customer segments and patterns</p>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">📥</span>
+                <h3>Export Data</h3>
+                <p>Download segmented customer data as CSV for further analysis</p>
+            </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
     async function runModel() {
-        const btn = document.querySelector(".run-btn");
-        const btnText = btn.querySelector(".btn-text");
-        const btnLoader = btn.querySelector(".btn-loader");
-        const resultDiv = document.getElementById("result");
+        const btn = document.getElementById("run-btn");
+        const status = document.getElementById("status");
         
         btn.disabled = true;
-        btnText.style.display = "none";
-        btnLoader.style.display = "inline";
-        resultDiv.innerHTML = "";
-        
+        btn.innerHTML = '<span class="btn-loader">⏳ Processing...</span>';
+        status.innerHTML = '';
+
         try {
             const res = await fetch("http://localhost:3000/run-model");
             const data = await res.json();
 
             if (data.error) {
-                resultDiv.innerHTML = `<p class="error">Error: ${data.error}</p>`;
+                status.innerHTML = `<p class="error">Error: ${data.error}</p>`;
             } else {
-                resultDiv.innerHTML = `<p class="success">✅ Segmentation completed! Redirecting...</p>`;
-                setTimeout(() => {
-                    window.location.href = "dashboard.html";
-                }, 1000);
+                status.innerHTML = '<p class="success">✅ Segmentation completed! <a href="dashboard.html">View Dashboard →</a></p>';
             }
         } catch (err) {
-            resultDiv.innerHTML = `<p class="error">Error: ${err.message}</p>`;
+            status.innerHTML = `<p class="error">Error: ${err.message}</p>`;
+        } finally {
             btn.disabled = false;
-            btnText.style.display = "inline";
-            btnLoader.style.display = "none";
+            btn.textContent = 'Run Segmentation';
         }
     }
     </script>
